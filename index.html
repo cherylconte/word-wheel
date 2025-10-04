@@ -106,19 +106,19 @@
     });
   }
 
-  function spin() {
-    if (spinning || items.length === 0) return;
+   function spin() {
+    if (spinning) return;
     spinning = true;
 
-    // normalize angle
+    // normalize angle to prevent huge values
     angle = angle % (2 * Math.PI);
 
     // determine rotations and random offset
-    const extraRotations = Math.floor(Math.random() * 5) + 12; // more rotations = faster
+    const extraRotations = Math.floor(Math.random() * 5) + 8;
     const randomOffset = Math.random() * 2 * Math.PI;
     const targetAngle = angle + extraRotations * 2 * Math.PI + randomOffset;
 
-    // reset transition for instant jump
+    // reset transition for instant jump to current angle
     canvas.style.transition = 'none';
     canvas.style.transform = `rotate(${angle}rad)`;
 
@@ -129,12 +129,11 @@
     canvas.style.transition = 'transform 3s cubic-bezier(0.33, 1, 0.68, 1)';
     canvas.style.transform = `rotate(${targetAngle}rad)`;
 
-    // after spin
     setTimeout(() => {
         spinning = false;
         angle = targetAngle % (2 * Math.PI); // keep normalized
     }, 3000);
-}
+  }
 
 
   buildBtn.addEventListener("click", buildSpinner);
