@@ -175,19 +175,29 @@ Elderberry</textarea>
   }
 
   function spin() {
-    if (spinning) return;
-    spinning = true;
-    const duration = parseInt(spinSpeedInput.value) || 4000;
-    const extraRotations = Math.floor(Math.random() * 3) + 6;
-    const targetAngle = angle + extraRotations * 2 * Math.PI + Math.random() * 2 * Math.PI;
-    canvas.style.transition = `transform ${duration/1000}s cubic-bezier(0.25, 1, 0.25, 1)`;
-    canvas.style.transform = `rotate(${targetAngle}rad)`;
+  if (spinning) return;
+  spinning = true;
+  const duration = parseInt(spinSpeedInput.value) || 4000;
+  const extraRotations = Math.floor(Math.random() * 3) + 6;
+  const targetAngle = angle + extraRotations * 2 * Math.PI + Math.random() * 2 * Math.PI;
 
-    setTimeout(() => {
-      spinning = false;
-      angle = targetAngle % (2 * Math.PI);
-    }, duration);
-  }
+  // Remove transition temporarily to reset rotation
+  canvas.style.transition = 'none';
+  canvas.style.transform = `rotate(${angle}rad)`;
+
+  // Force reflow
+  void canvas.offsetWidth;
+
+  // Apply new rotation with transition
+  canvas.style.transition = `transform ${duration/1000}s cubic-bezier(0.25, 1, 0.25, 1)`;
+  canvas.style.transform = `rotate(${targetAngle}rad)`;
+
+  setTimeout(() => {
+    spinning = false;
+    angle = targetAngle % (2 * Math.PI);
+  }, duration);
+}
+
 
   buildBtn.addEventListener("click", buildSpinner);
   spinnerContainer.addEventListener("click", spin);
