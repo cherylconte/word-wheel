@@ -110,29 +110,29 @@
     if (spinning || items.length === 0) return;
     spinning = true;
 
-    // Normalize the angle to prevent huge values
+    // normalize angle
     angle = angle % (2 * Math.PI);
 
-    // Randomize spins and offset
+    // determine rotations and random offset
     const extraRotations = Math.floor(Math.random() * 5) + 12; // more rotations = faster
     const randomOffset = Math.random() * 2 * Math.PI;
     const targetAngle = angle + extraRotations * 2 * Math.PI + randomOffset;
 
-    // Reset transition so next spin starts instantly at current angle
+    // reset transition for instant jump
     canvas.style.transition = 'none';
     canvas.style.transform = `rotate(${angle}rad)`;
 
-    // Force reflow to apply the reset instantly
+    // force reflow
     void canvas.offsetWidth;
 
-    // Animate spin
+    // animate spin
     canvas.style.transition = 'transform 3s cubic-bezier(0.33, 1, 0.68, 1)';
     canvas.style.transform = `rotate(${targetAngle}rad)`;
 
-    // Update state after spin
+    // after spin
     setTimeout(() => {
         spinning = false;
-        angle = targetAngle % (2 * Math.PI);
+        angle = targetAngle % (2 * Math.PI); // keep normalized
     }, 3000);
 }
 
