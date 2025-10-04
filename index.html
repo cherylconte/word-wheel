@@ -5,71 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Customizable Text Spinner</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    background: #f0f0f0;
-  }
-  #controls {
-    padding: 15px;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-  }
-  #controls div {
-    display: flex;
-    flex-direction: column;
-    min-width: 100px;
-  }
-  label {
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-  }
-  input[type=text], input[type=number], input[type=color] {
-    padding: 5px;
-    font-size: 1rem;
-  }
-  button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    background: #0077cc;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-  }
+  body { font-family: Arial, sans-serif; text-align: center; margin: 0; background: #f0f0f0; }
+  #controls { padding: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+  #controls div { display: flex; flex-direction: column; min-width: 100px; }
+  label { font-size: 0.9rem; margin-bottom: 4px; }
+  input[type=text], input[type=number], input[type=color] { padding: 5px; font-size: 1rem; }
+  button { padding: 10px 20px; font-size: 1rem; border: none; background: #0077cc; color: white; border-radius: 6px; cursor: pointer; }
   button:hover { background: #005fa3; }
-  #colorPickers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    align-items: center;
-  }
-  #spinner-container {
-    position: relative;
-    margin: 20px auto;
-    width: 500px;
-    height: 500px;
-  }
-  #spinner {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    touch-action: manipulation;
-  }
-  #arrow {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 40px;
-    color: red;
-    z-index: 10;
-  }
+  #colorPickers { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  #spinner-container { position: relative; margin: 20px auto; width: 500px; height: 500px; }
+  #spinner { width: 100%; height: 100%; border-radius: 50%; touch-action: manipulation; }
+  #arrow { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 40px; color: red; z-index: 10; }
 </style>
 </head>
 <body>
@@ -118,8 +64,7 @@
   canvas.height = 500;
 
   function getColors() {
-    return Array.from(colorPickersDiv.querySelectorAll('input[type=color]'))
-                .map(input => input.value);
+    return Array.from(colorPickersDiv.querySelectorAll('input[type=color]')).map(input => input.value);
   }
 
   function buildSpinner() {
@@ -165,26 +110,32 @@
     if (spinning || items.length === 0) return;
     spinning = true;
 
+    // normalize angle to prevent huge values
     angle = angle % (2 * Math.PI);
+
+    // determine rotations and random offset
     const extraRotations = Math.floor(Math.random() * 5) + 8;
     const randomOffset = Math.random() * 2 * Math.PI;
     const targetAngle = angle + extraRotations * 2 * Math.PI + randomOffset;
 
+    // reset transition for instant jump to current angle
     canvas.style.transition = 'none';
     canvas.style.transform = `rotate(${angle}rad)`;
-    void canvas.offsetWidth; // force reflow
 
+    // force reflow
+    void canvas.offsetWidth;
+
+    // animate spin with cubic-bezier for smooth acceleration
     canvas.style.transition = 'transform 3s cubic-bezier(0.33, 1, 0.68, 1)';
     canvas.style.transform = `rotate(${targetAngle}rad)`;
 
     setTimeout(() => {
       spinning = false;
-      angle = targetAngle % (2 * Math.PI);
+      angle = targetAngle % (2 * Math.PI); // keep normalized
     }, 3000);
   }
 
   buildBtn.addEventListener("click", buildSpinner);
-
   spinnerContainer.addEventListener("click", spin);
   spinnerContainer.addEventListener("touchstart", spin);
 
